@@ -18,6 +18,15 @@ int speed;
 int turn_ratio;
 
 
+/* NOTES:
+    In goTowardsSlot, goTowardsSlotLastError is checked but not changed.
+    This is true for all of these functions.
+    As a result, d is not utilized.
+    Fix this after implementing first part.
+
+*/
+
+
 /* check before start:
     camera index
     camera lens
@@ -145,37 +154,19 @@ void birElOynaRasit(int color, int pos){
     int x_axis=0;
     int x_axis_2=1;
     setTriangle(0);
-    //searchTriangleMethod(x_axis, x_axis_2);
-    /*
-    goTowardsSlotMethodRasitAllign(x_axis, x_axis_2, y_threshold, 10, turn_ratio, new_cam_index); // 
-    cout<<"Allignment DONE!"<<endl;
-    waitKey(0);
-    */
     
+
+    //Do it in two pieces!
+    allignSlotMethod(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index);
+
     goTowardsSlotMethodRasit(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index); // used to be -1 * speed
 
     cout<<"DURDUM!"<<endl;
     driveMotorForSeconds(2, 40, 40);
     cout<<"Kör gittim!"<<endl;
-    //txArduino(driveStepper(400, 'D', '1'));    
-    //cout<<"sleep for 5 sec"<<endl;
-    //usleep(5E6);
 
-
-    //txArduino(driveStepper(100, 'U', '0'));
     break;
 
-    /*
-    cout<<"sleep for 5"<<endl;
-    usleep(5E5);
-
-    
-    setObject('G');
-    switchToCamera(rear_cam_index);
-    goTowardsObjectMethod('G', y_threshold, -1 * speed, turn_ratio, rear_cam_index, 1);
-    if (waitKey(0)==27) {break;}
-    cout<<"continues"<<endl;
-    */
     }
     
 }

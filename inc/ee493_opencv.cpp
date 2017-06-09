@@ -4,6 +4,7 @@ void getTriangleArray(Mat image);
 void calibrateDoubleCamera();
 Mat getTriangleContours(Mat image, int trig_index_1, int trig_index_2);
 Point2f getBoardSlot(Mat img, int trig_index_1, int trig_intex_2, Mat& binary_img, bool inverse = false);
+Point2f boardForAllignSlot(Mat img, int trig_index_1, int trig_intex_2, bool inverse, bool first_call);
 
 int getFPS();
 
@@ -392,13 +393,6 @@ Point2f boardSlotRasit(Mat img, int trig_index_1, int trig_intex_2, bool inverse
 
     else{
         Mat imageContours = detectTriangles(img);
-        /*
-        imshow("mask",mask);
-        cout<<"mask"<<endl;
-		waitKey(0);
-		*/
-		
-        //imageContours.copyTo(imageOut, mask);
 
         // Find contours and preserve matching ones.
         vector<vector<Point>> contours; // Vector for storing contour
@@ -426,7 +420,7 @@ Point2f boardSlotRasit(Mat img, int trig_index_1, int trig_intex_2, bool inverse
 		//// ADDITION START ////
 
 		//Clear trianglesDetected
-    	trianglesDetected.clear();
+    	
 
     	int numberOfSelectedTriangles = 0;
     	int averageTriangleArea = 0;
@@ -437,7 +431,7 @@ Point2f boardSlotRasit(Mat img, int trig_index_1, int trig_intex_2, bool inverse
     		if (hierarchy[i][3] != -1){continue;}
 			drawContours( test, contours, i, Scalar(255,255,255), -1, 8, hierarchy, 0, Point() );
 			// Save all triangles.
-			trianglesDetected.push_back(mc[i].x); 
+			
 
 
 
@@ -500,6 +494,50 @@ Point2f boardSlotRasit(Mat img, int trig_index_1, int trig_intex_2, bool inverse
     }
 
 	//dispImage(imageOut, "imageOut", 0 );
+    return point;
+}
+
+Point2f boardForAllignSlot(Mat img, int trig_index_1, int trig_intex_2, bool inverse, bool first_call){
+
+    
+    Point2f point;
+    Mat imageOut = Mat::zeros(img.size(), CV_8UC1);
+    //Mat imageMasked;
+    //Mat forMeasurement = Mat::zeros(img.size(), CV_8UC1);
+
+    if (first_call){
+        point = getBoardSlot(img, trig_index_1, trig_intex_2, imageOut, inverse);    
+        initTriangles(imageOut,img);
+        // This part initializes position of selected triangles. 
+        
+    }
+
+    else{
+        Mat imageContours = detectTriangles(img);
+
+        
+        pairTriangles(imageContours);
+
+        if (trianglesSelected.size()==1){point = Point2f(trianglesSelected[0],img.rows/2);} // y axis is not important.
+        else if (trianglesSelected.size()==2){point = Point2f((trianglesSelected[0]+trianglesSelected[1])/2,img.rows/2);} // y axis is not important.
+        else {cout<<"More than one trianles in trianglesSelected. Need to dump some of them."<<endl;}
+        
+
+        Mat forDebugMat = img.clone();
+        circle( forDebugMat,
+         point,
+         point.x/32.0,
+         Scalar( 255, 255, 255 ),
+         -1,
+         8 ); //lineType
+
+
+
+        dispImage(forDebugMat, "forDebugMat", 0 );
+        //dispImage(imageOut, "imageOut", 0 );
+    }
+
+    //dispImage(imageOut, "imageOut", 0 );
     return point;
 }
 

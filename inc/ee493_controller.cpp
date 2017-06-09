@@ -9,9 +9,9 @@ bool goTowardsObjectRasit(int base_speed, Mat img, int colorFront, bool ArduinoC
 void goTowardsObjectMethodRasit(int color, int y_threshold, int speed, int control_divider, int cam_index, int direction);
 typedef std::chrono::high_resolution_clock Clock;
 bool goTowardsSlotRasit(int base_speed, Mat img, int trig_index, int second_slot_index, bool ArduinoConnected, int y_threshold, int turn_rate_divider);
-bool goTowardsSlotRasitAllign(int base_speed, Mat img, int trig_index, int trig_index_2 , bool ArduinoConnected, int y_threshold, int turn_rate_divider );
+bool allignSlot(int base_speed, Mat img, int trig_index, int trig_index_2 , bool ArduinoConnected, int y_threshold, int turn_rate_divider );
 void goTowardsSlotMethodRasit(int first_slot_index, int second_slot_index, int y_threshold, int speed, int control_divider, int cam_index);
-void goTowardsSlotMethodRasitAllign(int first_slot_index, int second_slot_index, int y_threshold, int speed, int control_divider, int cam_index);
+void allignSlotMethod(int first_slot_index, int second_slot_index, int y_threshold, int speed, int control_divider, int cam_index);
 
 int last_error=1000;
 
@@ -119,7 +119,7 @@ void goTowardsSlotMethodRasit(int first_slot_index, int second_slot_index, int y
 
 
 
-void goTowardsSlotMethodRasitAllign(int first_slot_index, int second_slot_index, int y_threshold, int speed, int control_divider, int cam_index)
+void allignSlotMethod(int first_slot_index, int second_slot_index, int y_threshold, int speed, int control_divider, int cam_index)
 {
 
     switchToCamera(cam_index);
@@ -131,11 +131,11 @@ void goTowardsSlotMethodRasitAllign(int first_slot_index, int second_slot_index,
 
     object_exist = true;
     
-    while (object_exist and (max_average_height<y_height_stop) )
+    while (object_exist and (max_average_height<y_height_stop) ) // maybe time should be enough to use this.
     {
         getFrameFromCamera();
-        //params 50, 100, 10
-        object_exist = goTowardsSlotRasitAllign(speed, removeColor(newFrame, 'Y'), first_slot_index, second_slot_index, ArduinoConnected, y_threshold, control_divider);
+        
+        object_exist = allignSlot(speed, removeColor(newFrame, 'Y'), first_slot_index, second_slot_index, ArduinoConnected, y_threshold, control_divider);
     }
     max_contour_area = 0;
     txArduino(driveMotor(0, 0));
@@ -357,7 +357,7 @@ bool goTowardsSlot(int base_speed, Mat img, int trig_index, int trig_index_2 , b
     }
     return object_exist;
 }
-
+int goTowardsSlotRasitLastError = 1000;
 bool goTowardsSlotRasit(int base_speed, Mat img, int trig_index, int trig_index_2 , bool ArduinoConnected, int y_threshold, int turn_rate_divider )
 {
     
@@ -379,7 +379,7 @@ bool goTowardsSlotRasit(int base_speed, Mat img, int trig_index, int trig_index_
     else {cout<<"changed directions"<<endl;}
 
 
-    if (goTowardsSlotLastError == 1000){
+    if (goTowardsSlotRasitLastError == 1000){
     //speed = (center.x) / turn_rate_divider;
     speed = (error)*k_p;
 	} else {
@@ -413,16 +413,14 @@ bool goTowardsSlotRasit(int base_speed, Mat img, int trig_index, int trig_index_
 }
 
 
-bool goTowardsSlotRasitAllign(int base_speed, Mat img, int trig_index, int trig_index_2 , bool ArduinoConnected, int y_threshold, int turn_rate_divider )
+bool allignSlot(int base_speed, Mat img, int trig_index, int trig_index_2 , bool ArduinoConnected, int y_threshold, int turn_rate_divider )
 {
-    double k_p = 0.06;
-	double k_d = 0.1;
     //y_threshold = -20;
     //Point2f center = getBoardSlot(img, trig_index, trig_index_2);
-    Point2f center = boardSlotRasit(img, trig_index, trig_index_2, false, false);
+    Point2f center = boardForAllignSlot(img, trig_index, trig_index_2, false, false);
     forDebug = Point2f(center.x,center.y);
-    
-	//double k_d = 0.1;
+    int camError = 10;
+    //double k_d = 0.1;
     //  dispImage(img, "trig", 0);
     int mid_y = img.rows / 2;
     int mid_x = img.cols / 2;
@@ -431,24 +429,21 @@ bool goTowardsSlotRasitAllign(int base_speed, Mat img, int trig_index, int trig_
     string txString;
     int speed = 0;
     int error = center.x + camError;
-    if (max_average_height<y_height_change_dir) {error += x_margin;cout<<"hey"<<endl;}
+    if (max_average_height<y_height_change_dir) {error += x_margin;cout<<"margin added."<<endl;}
     else {cout<<"changed directions"<<endl;}
 
 
     if (goTowardsSlotLastError == 1000){
-    //speed = (center.x) / turn_rate_divider;
     speed = (error)*k_p;
-	} else {
-		//speed = (center.x) / turn_rate_divider + k_d*(error-last_error);
-		speed = (error)*k_p + k_d*(error-last_error);
-	}
-	cout<<"error= "<<error<<"last_error= "<<last_error<<endl;
-	last_error=error;
+    } else {
+        speed = (error)*k_p + k_d*(error-last_error);
+    }
+    cout<<"error= "<<error<<"last_error= "<<last_error<<endl;
+    last_error=error;
 
     if (abs(center.x) < 550)
     {
-    	if (abs(center.x) < 0){ txArduino(driveMotor(-15,15));}
-    	else if (abs(center.x) > 0){ txArduino(driveMotor(15,-15));}
+        txArduino(driveMotor(base_speed + speed, base_speed - speed));
     }
     else
     {
@@ -463,7 +458,7 @@ bool goTowardsSlotRasitAllign(int base_speed, Mat img, int trig_index, int trig_
         object_exist = false;
     }
 
-    if ( abs(error)<20 ) object_exist = false;
+    //if ( abs(error)<10 ) object_exist = false;
 
 
     return object_exist;

@@ -280,6 +280,11 @@ void pairTriangles(Mat input){
 				reverse(trianglesDetected.begin(),trianglesDetected.end());
 			}
 
+			else {//No reason to debug this now.
+				cout<<"Something went wrong!"<<endl;
+				cout<<"Either at least one triangle from both sides departed\n or more than 7 contours are seen."<<endl;
+				}
+
 		}
 
 		sort(trianglesSelected.begin(), trianglesSelected.end());
