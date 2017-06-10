@@ -78,3 +78,12 @@ int number_of_last_seen_triangles=0;
 
 
 Point forDebug;
+
+// Initializers for PID.
+int goTowardsSlotRasitLastError = 1000;
+int allignSlotRasitLastError = 1000;
+
+
+///
+int averageHeightForAllignSlot = 0;
+int heightAtWhichAllignSlotStops = 17;

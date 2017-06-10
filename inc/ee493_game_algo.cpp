@@ -232,21 +232,23 @@ void pairTriangles(Mat input){
 		}	
 
 		else { // Some of the triangles are lost.
-			
+			// Tek üçgene düşerse trianglesDetected[i+1] ile alakasız bir mem. loc'a gidiyor. 
+			// Tahtaya yaklaşınca kullanacaksak dikkate alınmalı bu.
 			int calculated_distance_between_triangles=0;
 			for (int i=0;i<(trianglesDetected.size()-1);i++){
 				calculated_distance_between_triangles = calculated_distance_between_triangles + (trianglesDetected[i+1]-trianglesDetected[i]);
 			}
-			calculated_distance_between_triangles /= (trianglesDetected.size()-1);
+			// If size is 1, wewould be dividing by 0 which causes a floating point exception.
+			if (trianglesDetected.size()!=1) {
+			calculated_distance_between_triangles /= (trianglesDetected.size()-1);}
 			cout<<"calculated_distance_between_triangles: "<<calculated_distance_between_triangles<<endl;
 
 			// Now find from which side triangles disappeared.
 
 			if ( (trianglesDetected[trianglesDetected.size()-1]+calculated_distance_between_triangles)> input.cols ){
-				// If this happened left side has lost some of the triangles.
+				// If this happened right side has lost some of the triangles.
 				trianglesSelected.clear();
-				reverse(trianglesDetected.begin(),trianglesDetected.end());
-				cout<<"ters çevirilmiş: "<<endl;
+				
 
 				for (int i = 0; i<trianglesDetected.size();i++){
 				
@@ -258,7 +260,7 @@ void pairTriangles(Mat input){
 				trianglesSelected.push_back(trianglesDetected[order_from_left[i]]);
 				cout<<"Added "<<trianglesDetected[order_from_left[i]]<<endl;
 				}
-				reverse(trianglesDetected.begin(),trianglesDetected.end());
+				
 			}
 			else if ( (trianglesDetected[0]-calculated_distance_between_triangles)< 5 ){
 				// If this happened right side has lost some of the triangles.
@@ -270,7 +272,7 @@ void pairTriangles(Mat input){
 				trianglesSelected.push_back(trianglesDetected[order_from_right[i]]);
 				}
 				cout<<"trianglesSelected size: "<<trianglesSelected.size()<<endl;
-				cout<<"Right loses, selected triangles are at ";
+				cout<<"Left loses, selected triangles are at ";
 
 				for (int i = 0; i<trianglesSelected.size();i++){
 					

@@ -5,6 +5,7 @@ void calibrateDoubleCamera();
 Mat getTriangleContours(Mat image, int trig_index_1, int trig_index_2);
 Point2f getBoardSlot(Mat img, int trig_index_1, int trig_intex_2, Mat& binary_img, bool inverse = false);
 Point2f boardForAllignSlot(Mat img, int trig_index_1, int trig_intex_2, bool inverse, bool first_call);
+int getAverageHeight(Mat imageContours);
 
 int getFPS();
 
@@ -374,6 +375,27 @@ int findHeightRasit(Mat input){
 }
 
 
+int getAverageHeight(Mat imageContours){
+
+    vector<vector<Point>> contours; // Vector for storing contour
+    vector<Vec4i> hierarchy;
+    findContours(imageContours, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+
+    int averageHeightForStopping = 0;
+
+    for (int i=0;i<contours.size();i++){
+            //Mat test = Mat::zeros(img.size(), CV_8UC1);
+            if (contourArea(contours[i])<5){continue;}
+            if (hierarchy[i][3] != -1){continue;}
+            //drawContours( test, contours, i, Scalar(255,255,255), -1, 8, hierarchy, 0, Point() );
+            averageHeightForStopping = averageHeightForStopping+findHeightRasit(Mat(contours[i]));
+        }
+    if (contours.size()!=0){averageHeightForStopping /= contours.size();}    
+    else {cout<<"Contours size is 0 in getAverageHeight."<<endl;}        
+    return averageHeightForStopping;
+}
+
+
 Mat mask;
 
 Point2f boardSlotRasit(Mat img, int trig_index_1, int trig_intex_2, bool inverse, bool first_call){
@@ -502,8 +524,7 @@ Point2f boardForAllignSlot(Mat img, int trig_index_1, int trig_intex_2, bool inv
     
     Point2f point;
     Mat imageOut = Mat::zeros(img.size(), CV_8UC1);
-    //Mat imageMasked;
-    //Mat forMeasurement = Mat::zeros(img.size(), CV_8UC1);
+    Mat forDebugMat = Mat::zeros(img.size(), CV_8UC1);
 
     if (first_call){
         point = getBoardSlot(img, trig_index_1, trig_intex_2, imageOut, inverse);    
@@ -515,15 +536,17 @@ Point2f boardForAllignSlot(Mat img, int trig_index_1, int trig_intex_2, bool inv
     else{
         Mat imageContours = detectTriangles(img);
 
-        
+        averageHeightForAllignSlot = getAverageHeight(imageContours);
+        cout<<"getAverageHeight"<<getAverageHeight(imageContours)<<endl;
+
         pairTriangles(imageContours);
 
         if (trianglesSelected.size()==1){point = Point2f(trianglesSelected[0],img.rows/2);} // y axis is not important.
         else if (trianglesSelected.size()==2){point = Point2f((trianglesSelected[0]+trianglesSelected[1])/2,img.rows/2);} // y axis is not important.
-        else {cout<<"More than one trianles in trianglesSelected. Need to dump some of them."<<endl;}
-        
+        else {cout<<"More than two trianles in trianglesSelected. Need to dump some of them."<<endl;}
+        cout<<"Point is: "<<point<<endl;
 
-        Mat forDebugMat = img.clone();
+        forDebugMat = img.clone();
         circle( forDebugMat,
          point,
          point.x/32.0,

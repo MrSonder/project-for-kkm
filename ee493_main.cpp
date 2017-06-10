@@ -128,7 +128,7 @@ switchToCamera(new_cam_index);
 
     return 0;
 */
-    birElOynaRasitTam('B', pos);
+    birElOynaRasit('B', pos);
     
 }
 
@@ -151,9 +151,20 @@ void birElOynaRasit(int color, int pos){
     //cout<<"sleep for 6 sec"<<endl;
     //usleep(6E6);
     setObject('T');
-    int x_axis=0;
-    int x_axis_2=1;
-    setTriangle(0);
+    int x_axis=4;
+    int x_axis_2=5;
+    
+    if (x_axis == 0  and x_axis_2==1) {setTriangle(0);}
+    else if (x_axis ==1 and x_axis_2==1) {setTriangle(1);}
+    else if (x_axis ==1 and x_axis_2==2) {setTriangle(2);}
+    else if (x_axis ==2 and x_axis_2==2) {setTriangle(3);}
+    else if (x_axis ==2 and x_axis_2==3) {setTriangle(4);}
+    else if (x_axis ==3 and x_axis_2==3) {setTriangle(5);}
+    else if (x_axis ==3 and x_axis_2==4) {setTriangle(6);}
+    else if (x_axis ==4 and x_axis_2==4) {setTriangle(7);}
+    else if (x_axis ==4 and x_axis_2==5) {setTriangle(8);}
+    else if (x_axis ==5 and x_axis_2==5) {setTriangle(9);}
+    else if (x_axis ==5 and x_axis_2==6) {setTriangle(10);}
     
 
     //Do it in two pieces!
@@ -162,7 +173,7 @@ void birElOynaRasit(int color, int pos){
     goTowardsSlotMethodRasit(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index); // used to be -1 * speed
 
     cout<<"DURDUM!"<<endl;
-    driveMotorForSeconds(2, 40, 40);
+    driveMotorForSeconds(1.8, 40, 40);
     cout<<"Kör gittim!"<<endl;
 
     break;
@@ -284,7 +295,7 @@ void birElOynaRasitTam(int color, int pos){
     setTriangle(0);
     x_margin = 20;
 
-//added
+    //added
 	if (x_axis == 0  and x_axis_2==1) {setTriangle(0);}
     else if (x_axis ==1 and x_axis_2==1) {setTriangle(1);}
     else if (x_axis ==1 and x_axis_2==2) {setTriangle(2);}
