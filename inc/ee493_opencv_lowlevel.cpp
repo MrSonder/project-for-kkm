@@ -1,7 +1,7 @@
 
 void switchToCamera(int index);
 void startCamera(int index);
-void dispImage(Mat image, String title, int loc);
+//void dispImage(Mat image, String title, int loc);
 void statusBar(Point2f center);
 Point2f findCenter(Mat image);
 

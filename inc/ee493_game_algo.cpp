@@ -222,18 +222,49 @@ void pairTriangles(Mat input){
 
 		// Now, pair them to ours.
 		cout<<"order_from_left: "<<order_from_left.size()<<" order_from_right: "<<order_from_right.size()<<endl;
+		
+		trianglesSelected.clear();
+
 		if (contours.size()==number_of_last_seen_triangles){
 			// All of them are still seen. Then select according to order from left.
 			int number_of_triangles_selected = trianglesSelected.size();
-			trianglesSelected.clear();
-			for (int i=0; i<order_from_left.size();i++){
+
+
+			if (trianglesFromRightDeparted){
+				for (int i=0; i<order_from_left.size();i++){
 				trianglesSelected.push_back(trianglesDetected[order_from_left[i]]);
+				}
 			}
+
+			else if (trianglesFromLeftDeparted){
+
+				reverse(trianglesDetected.begin(),trianglesDetected.end());
+
+				for (int i=0; i<order_from_left.size();i++){
+				trianglesSelected.push_back(trianglesDetected[order_from_right[i]]);
+				}
+
+				reverse(trianglesDetected.begin(),trianglesDetected.end());
+			}
+
+			else {
+					for (int i=0; i<order_from_left.size();i++){
+					trianglesSelected.push_back(trianglesDetected[order_from_left[i]]);
+						}
+				}	
+			
 		}	
 
-		else { // Some of the triangles are lost.
+		else { 
+			// Some of the triangles are lost.
+			// Girip çıkan da olabilir.
 			// Tek üçgene düşerse trianglesDetected[i+1] ile alakasız bir mem. loc'a gidiyor. 
 			// Tahtaya yaklaşınca kullanacaksak dikkate alınmalı bu.
+
+			number_of_last_seen_triangles = trianglesDetected.size();
+
+			//trianglesSelected.clear();
+
 			int calculated_distance_between_triangles=0;
 			for (int i=0;i<(trianglesDetected.size()-1);i++){
 				calculated_distance_between_triangles = calculated_distance_between_triangles + (trianglesDetected[i+1]-trianglesDetected[i]);
@@ -247,7 +278,8 @@ void pairTriangles(Mat input){
 
 			if ( (trianglesDetected[trianglesDetected.size()-1]+calculated_distance_between_triangles)> input.cols ){
 				// If this happened right side has lost some of the triangles.
-				trianglesSelected.clear();
+				cout<<"Right loses. "<<endl;
+				
 				
 
 				for (int i = 0; i<trianglesDetected.size();i++){
@@ -261,10 +293,13 @@ void pairTriangles(Mat input){
 				cout<<"Added "<<trianglesDetected[order_from_left[i]]<<endl;
 				}
 				
+				
+				trianglesFromRightDeparted = true;
+
 			}
 			else if ( (trianglesDetected[0]-calculated_distance_between_triangles)< 5 ){
-				// If this happened right side has lost some of the triangles.
-				trianglesSelected.clear();
+				// If this happened left side has lost some of the triangles.
+				//trianglesSelected.clear();
 				reverse(trianglesDetected.begin(),trianglesDetected.end());
 
 				
@@ -280,6 +315,7 @@ void pairTriangles(Mat input){
 				}
 				cout<<endl;
 				reverse(trianglesDetected.begin(),trianglesDetected.end());
+				trianglesFromLeftDeparted = true;
 			}
 
 			else {//No reason to debug this now.
@@ -310,6 +346,24 @@ void pairTriangles(Mat input){
 				cout<<trianglesSelected[i]<<" ";
 			}
 			cout<<endl;
+
+
+
+		// Fill in maskForSecondPart for second part of the movement.
+		maskForSecondPart = Mat::zeros(input.size(), CV_8UC1);
+		Mat contoursHere = Mat::zeros(input.size(), CV_8UC1);
+
+        for (int i=0;i<mc.size();i++){
+        	for (int j=0; j<trianglesSelected.size();j++){
+        		if ( abs(mc[i].x-trianglesSelected[j])<5 ){
+        			drawContours(contoursHere, contours, i, Scalar(255, 0, 0), CV_FILLED, 8, hierarchy);
+        		}
+        	}
+        }
+        maskForSecondPart = MaskForTriangle(contoursHere, maskForSecondPart, 1); 
+
+        //dispImage(contoursHere,"contoursHere",3);
+        //dispImage(maskForSecondPart,"maskForSecondPart",3);
 		
 	
 }

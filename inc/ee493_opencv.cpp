@@ -407,10 +407,8 @@ Point2f boardSlotRasit(Mat img, int trig_index_1, int trig_intex_2, bool inverse
 	//Mat forMeasurement = Mat::zeros(img.size(), CV_8UC1);
 
     if (first_call){
-        point = getBoardSlot(img, trig_index_1, trig_intex_2, imageOut, inverse);    
-        mask = MaskForTriangle(imageOut, mask, 1); // 1 is used since number of contours is not 0. We don't want it to be 0. It could be anything but 0.
-        initTriangles(imageOut,img);
-        
+            point = pointForSecondPart;
+            mask = maskForSecondPart.clone();
     }
 
     else{
@@ -529,6 +527,8 @@ Point2f boardForAllignSlot(Mat img, int trig_index_1, int trig_intex_2, bool inv
     if (first_call){
         point = getBoardSlot(img, trig_index_1, trig_intex_2, imageOut, inverse);    
         initTriangles(imageOut,img);
+        
+
         // This part initializes position of selected triangles. 
         
     }
@@ -556,13 +556,17 @@ Point2f boardForAllignSlot(Mat img, int trig_index_1, int trig_intex_2, bool inv
 
 
 
+
+
         dispImage(forDebugMat, "forDebugMat", 0 );
         //dispImage(imageOut, "imageOut", 0 );
     }
-
+    pointForSecondPart  = point;
     //dispImage(imageOut, "imageOut", 0 );
     return point;
 }
+
+
 
 
 Mat getTriangleContours(Mat image, int trig_index_1, int trig_index_2)

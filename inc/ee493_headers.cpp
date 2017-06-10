@@ -21,6 +21,7 @@ using namespace std;
 
 
 Mat detectTriangles(Mat image);
+void dispImage(Mat image, String title, int loc);
 
 typedef std::chrono::high_resolution_clock Clock;
 
@@ -57,7 +58,7 @@ int contour_area_limit_margin = 550; // Buna gelince gideceği yere dönüyor.
 // When to stop where to go. How much of a margin is needed?
 int x_margin = 50; //needs to be changed.
 int y_height_stop = 35;
-int y_height_change_dir = 31;
+int y_height_change_dir = 29;
 int max_average_height = 0;
 // Triangle coordinates.
 vector<int> trianglesDetected;
@@ -86,4 +87,13 @@ int allignSlotRasitLastError = 1000;
 
 ///
 int averageHeightForAllignSlot = 0;
-int heightAtWhichAllignSlotStops = 17;
+int heightAtWhichAllignSlotStops = 15;
+
+///
+bool trianglesFromLeftDeparted = false;
+bool trianglesFromRightDeparted = false;
+
+
+/// 
+Mat maskForSecondPart;
+Point2f pointForSecondPart;

@@ -107,9 +107,10 @@ if (argc ==2){
     
     int inputInt = atoi(argv[1]);
     cout<<"arg int entered."<<endl;
-    k_p = inputInt/100.0;
-    cout<<"k_p is: "<<k_p<<endl;
-
+    //k_p = inputInt/100.0;
+    //cout<<"k_p is: "<<k_p<<endl;
+    cout<<"x_margin is: "<<inputInt<<endl;
+    x_margin=inputInt;
     switchToCamera(new_cam_index);
 
     birElOynaRasit('B', pos);
@@ -129,7 +130,7 @@ switchToCamera(new_cam_index);
     return 0;
 */
     birElOynaRasit('B', pos);
-    
+    break;
 }
 
 
@@ -151,9 +152,9 @@ void birElOynaRasit(int color, int pos){
     //cout<<"sleep for 6 sec"<<endl;
     //usleep(6E6);
     setObject('T');
-    int x_axis=4;
+    int x_axis=5;
     int x_axis_2=5;
-    
+    /*
     if (x_axis == 0  and x_axis_2==1) {setTriangle(0);}
     else if (x_axis ==1 and x_axis_2==1) {setTriangle(1);}
     else if (x_axis ==1 and x_axis_2==2) {setTriangle(2);}
@@ -165,12 +166,14 @@ void birElOynaRasit(int color, int pos){
     else if (x_axis ==4 and x_axis_2==5) {setTriangle(8);}
     else if (x_axis ==5 and x_axis_2==5) {setTriangle(9);}
     else if (x_axis ==5 and x_axis_2==6) {setTriangle(10);}
+    x_margin=90;
+    */
     
 
     //Do it in two pieces!
     allignSlotMethod(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index);
 
-    goTowardsSlotMethodRasit(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index); // used to be -1 * speed
+    goTowardsSlotAfterAllignSlotMethod(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index); // used to be -1 * speed
 
     cout<<"DURDUM!"<<endl;
     driveMotorForSeconds(1.8, 40, 40);
@@ -526,8 +529,8 @@ void setObject(int object)
         break;
     }
 }
-void setTriangle(int triangle){x_margin=triangle*5;}
-/*
+//void setTriangle(int triangle){x_margin=triangle*5;}
+
 void setTriangle(int triangle){
     switch (triangle){
         case 0: 
@@ -537,35 +540,31 @@ void setTriangle(int triangle){
             x_margin = 10;
             break;
         case 2:
-
+            x_margin=triangle*5;
             break;
         case 3:
-
+            x_margin=triangle*5;
             break;
         case 4:
-
+            x_margin=triangle*5;
             break;
         case 5:
-
+            x_margin=triangle*5;
             break;
         case 6:
-
+            x_margin=triangle*5;
             break;
         case 7:
-
+            x_margin=triangle*5;
             break;
         case 8:
-
+            x_margin=triangle*5;
             break;
         case 9:
-
+            x_margin=50;
             break;
         case 10:
-
-            break;
-        case 11:
-
+            x_margin=75;
             break;
     }
 }
-*/

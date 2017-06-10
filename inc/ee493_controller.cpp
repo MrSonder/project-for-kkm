@@ -12,6 +12,9 @@ bool goTowardsSlotRasit(int base_speed, Mat img, int trig_index, int second_slot
 bool allignSlot(int base_speed, Mat img, int trig_index, int trig_index_2 , bool ArduinoConnected, int y_threshold, int turn_rate_divider );
 void goTowardsSlotMethodRasit(int first_slot_index, int second_slot_index, int y_threshold, int speed, int control_divider, int cam_index);
 void allignSlotMethod(int first_slot_index, int second_slot_index, int y_threshold, int speed, int control_divider, int cam_index);
+void goTowardsSlotAfterAllignSlotMethod(int first_slot_index, int second_slot_index, int y_threshold, int speed, int control_divider, int cam_index);
+
+
 
 int last_error=1000;
 
@@ -94,6 +97,30 @@ void goTowardsSlotMethod(int first_slot_index, int second_slot_index, int y_thre
     }
 }
 
+void goTowardsSlotAfterAllignSlotMethod(int first_slot_index, int second_slot_index, int y_threshold, int speed, int control_divider, int cam_index)
+{
+
+    switchToCamera(cam_index);
+    //getFrameFromCamera(resizeRatio, true, true);
+   
+    getFrameFromCamera();
+    
+    Point slots = boardSlotRasit(newFrame, first_slot_index, second_slot_index, false, true);
+
+    object_exist = true;
+    
+    while (object_exist and (max_average_height<y_height_stop) )
+    {
+        getFrameFromCamera();
+        //params 50, 100, 10
+        object_exist = goTowardsSlotRasit(speed, removeColor(newFrame, 'Y'), first_slot_index, second_slot_index, ArduinoConnected, y_threshold, control_divider);
+    }
+    max_contour_area = 0;
+    goTowardsSlotRasitLastError = 1000;
+    txArduino(driveMotor(0, 0));
+}
+
+
 void goTowardsSlotMethodRasit(int first_slot_index, int second_slot_index, int y_threshold, int speed, int control_divider, int cam_index)
 {
 
@@ -125,10 +152,10 @@ void allignSlotMethod(int first_slot_index, int second_slot_index, int y_thresho
 
     switchToCamera(cam_index);
     //getFrameFromCamera(resizeRatio, true, true);
-   
+    averageHeightForAllignSlot = 0;
     getFrameFromCamera();
     
-    Point slots = boardSlotRasit(newFrame, first_slot_index, second_slot_index, false, true);
+    Point slots = boardForAllignSlot(newFrame, first_slot_index, second_slot_index, false, true);
 
     object_exist = true;
     
