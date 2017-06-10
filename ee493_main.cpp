@@ -152,9 +152,9 @@ void birElOynaRasit(int color, int pos){
     //cout<<"sleep for 6 sec"<<endl;
     //usleep(6E6);
     setObject('T');
-    int x_axis=5;
-    int x_axis_2=5;
-    /*
+    int x_axis=0;
+    int x_axis_2=1;
+    
     if (x_axis == 0  and x_axis_2==1) {setTriangle(0);}
     else if (x_axis ==1 and x_axis_2==1) {setTriangle(1);}
     else if (x_axis ==1 and x_axis_2==2) {setTriangle(2);}
@@ -166,8 +166,7 @@ void birElOynaRasit(int color, int pos){
     else if (x_axis ==4 and x_axis_2==5) {setTriangle(8);}
     else if (x_axis ==5 and x_axis_2==5) {setTriangle(9);}
     else if (x_axis ==5 and x_axis_2==6) {setTriangle(10);}
-    x_margin=90;
-    */
+    
     
 
     //Do it in two pieces!
@@ -534,34 +533,34 @@ void setObject(int object)
 void setTriangle(int triangle){
     switch (triangle){
         case 0: 
-            x_margin = 0;
+            x_margin = 20;
             break;
         case 1:
-            x_margin = 10;
+            x_margin = 20;
             break;
         case 2:
-            x_margin=triangle*5;
+            x_margin=25;
             break;
         case 3:
-            x_margin=triangle*5;
+            x_margin=30;
             break;
         case 4:
-            x_margin=triangle*5;
+            x_margin=40;
             break;
         case 5:
-            x_margin=triangle*5;
+            x_margin=35;
             break;
         case 6:
-            x_margin=triangle*5;
+            x_margin=45;
             break;
         case 7:
-            x_margin=triangle*5;
+            x_margin=50;
             break;
         case 8:
-            x_margin=triangle*5;
+            x_margin=55;
             break;
         case 9:
-            x_margin=50;
+            x_margin=65;
             break;
         case 10:
             x_margin=75;
