@@ -9,7 +9,7 @@ int getAverageHeight(Mat imageContours);
 
 int getFPS();
 
-//Mat detectTriangles(Mat image);
+
 
 Point2f drawCenterLine(Mat imageIn, int colorFront);
 Mat getObjectOfColor(Mat image, int colorFront);
@@ -22,8 +22,146 @@ Mat blackMask(Mat image);
 
 Mat removeColor(Mat image, int color);
 
+void readBoard();
+
+
 
 int findHeightRasit(Mat input);
+
+void readBoard(){
+    
+    Mat outputImage = newFrame.clone();
+    Mat imageContours;
+    int heightOfTriangle = 0;
+
+    for (int i=0;i<5;i++){
+        getFrameFromCamera();
+        imageContours = detectTriangles(newFrame);
+        cout<<"a height is: "<<getAverageHeight(imageContours)<<endl;
+        if (getAverageHeight(imageContours)>heightOfTriangle){
+            heightOfTriangle = getAverageHeight(imageContours);
+            }
+    }
+    cout<<"final height is: "<<heightOfTriangle<<endl;
+
+    vector<vector<Point>> contours; // Vector for storing contour
+    vector<Vec4i> hierarchy;
+    findContours(imageContours, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    /// Get the moments
+    vector<Moments> mu(contours.size() );   
+    for( int i = 0; i < contours.size(); i++ )
+    { mu[i] = moments( contours[i], false ); }
+
+    ///  Get the mass centers:
+    vector<Point2f> mc( contours.size() );
+    for( int i = 0; i < contours.size(); i++ )
+    { mc[i] = Point2f( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00 );}
+    ///     
+    // Sort contours.
+    struct myclass {
+        bool operator() (cv::Point2f pt1, cv::Point2f pt2) { return (pt1.x < pt2.x);}
+    } myobject;
+
+    std::sort(mc.begin(), mc.end(), myobject);
+    
+    double radiusOfCircles = heightOfTriangle * 0.9;
+
+    int heightForFloors[6] = {0,24,47,69,90,112};
+
+
+
+    // First floor
+    
+    for (int x=0;x<(mc.size()-1);x++ ){
+        int y=0;
+        // Create circles for measurement.
+        circle( outputImage,
+         Point(   (mc[x].x+mc[x+1].x)/2   ,  ( (mc[x].y+mc[x+1].y)/2 - heightOfTriangle - heightForFloors[y] )  ), // Minus since upper means lower in pixels.
+         radiusOfCircles, // this should be based on length of 
+         Scalar( 0, 0, 255 ),
+         1,
+         8 );
+
+    }
+
+    // Second floor
+
+    for (int x=1;x<(mc.size()-1);x++ ){
+        int y=1;
+        // Create circles for measurement.
+        circle( outputImage,
+         Point(   mc[x].x -x_difference_due_to_angle ,  ( mc[x].y - heightOfTriangle - heightForFloors[y] )  ), // Minus since upper means lower in pixels.
+         radiusOfCircles, // this should be based on length of 
+         Scalar( 0, 255, 0 ),
+         1,
+         8 );
+
+    }
+
+    // Third floor
+
+    for (int x=1;x<(mc.size()-2);x++ ){
+        int y=2;
+        // Create circles for measurement.
+        circle( outputImage,
+         Point(   (mc[x].x+mc[x+1].x)/2 -x_difference_due_to_angle ,  ( (mc[x].y+mc[x+1].y)/2 - heightOfTriangle - heightForFloors[y]   )  ), // Minus since upper means lower in pixels.
+         radiusOfCircles, // this should be based on length of 
+         Scalar( 255, 0, 0 ),
+         1,
+         8 );
+
+    }
+
+    // Fourth floor
+
+    for (int x=2;x<(mc.size()-2);x++ ){
+        int y=3;
+        // Create circles for measurement.
+        circle( outputImage,
+         Point(   mc[x].x -x_difference_due_to_angle ,  ( mc[x].y - heightOfTriangle - heightForFloors[y] )  ), // Minus since upper means lower in pixels.
+         radiusOfCircles, // this should be based on length of 
+         Scalar( 0, 255, 0 ),
+         1,
+         8 );
+
+    }
+
+    // Fifth floor
+
+    for (int x=2;x<(mc.size()-3);x++ ){
+        int y=4;
+        // Create circles for measurement.
+        circle( outputImage,
+         Point(   (mc[x].x+mc[x+1].x)/2 -x_difference_due_to_angle ,  ( (mc[x].y+mc[x+1].y)/2 - heightOfTriangle - heightForFloors[y]   )  ), // Minus since upper means lower in pixels.
+         radiusOfCircles, // this should be based on length of 
+         Scalar( 255, 0, 0 ),
+         1,
+         8 );
+
+    }
+
+    // Sixth floor
+
+    for (int x=3;x<(mc.size()-3);x++ ){
+        int y=5;
+        // Create circles for measurement.
+        circle( outputImage,
+         Point(   mc[x].x -x_difference_due_to_angle ,  ( mc[x].y - heightOfTriangle  - heightForFloors[y]  )  ), // Minus since upper means lower in pixels. // Used to be -heightOfTriangle*y*floorHeightMultiplier.
+         radiusOfCircles, // this should be based on length of 
+         Scalar( 0, 255, 0 ),
+         1,
+         8 );
+
+    }
+
+
+
+    dispImage(imageContours,"imageContours",1);
+    dispImage(outputImage,"outputImage",0);
+    waitKey(0);
+
+
+}
 
 
 Mat removeColor(Mat image, int color)

@@ -62,10 +62,7 @@ int main(int argc, char *argv[])
          << "\033[1;31mArduinoConnected: " << ArduinoConnected << endl;
 
     //cout<< arg<<endl;
-    int colorFront = 'B';
-    //pos = 1 left
-    //pos = -1 rightd
-    int pos = 1;
+    
     /*
     auto t1 = Clock::now();
     Mat image = imread("img/red.jpg");
@@ -109,17 +106,21 @@ if (argc ==2){
     cout<<"arg int entered."<<endl;
     //k_p = inputInt/100.0;
     //cout<<"k_p is: "<<k_p<<endl;
-    cout<<"x_margin is: "<<inputInt<<endl;
-    x_margin=inputInt;
-    switchToCamera(new_cam_index);
-
-    birElOynaRasit('B', pos);
     
+    switchToCamera(bot_cam_index);
+    getFrameFromCamera();
+    readBoard();
+
     
     cout<<"arg int entered."<<endl;
     return 0;
 }
 
+switchToCamera(bot_cam_index);
+getFrameFromCamera();
+readBoard();
+
+return 0;
 
 
 while(true){
@@ -152,8 +153,8 @@ void birElOynaRasit(int color, int pos){
     //cout<<"sleep for 6 sec"<<endl;
     //usleep(6E6);
     setObject('T');
-    int x_axis=0;
-    int x_axis_2=1;
+    int x_axis=2;
+    int x_axis_2=3;
     
     if (x_axis == 0  and x_axis_2==1) {setTriangle(0);}
     else if (x_axis ==1 and x_axis_2==1) {setTriangle(1);}

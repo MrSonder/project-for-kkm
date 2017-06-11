@@ -26,6 +26,13 @@ void dispImage(Mat image, String title, int loc);
 typedef std::chrono::high_resolution_clock Clock;
 
 
+int colorFront = 'B';
+//pos = 1 left
+//pos = -1 rightd
+int pos = 1;
+
+
+
 float resizeRatio = 0.5;
 bool ArduinoConnected = true;
 
@@ -97,3 +104,7 @@ bool trianglesFromRightDeparted = false;
 /// 
 Mat maskForSecondPart;
 Point2f pointForSecondPart;
+
+
+// Make pos
+int x_difference_due_to_angle = pos*4;
