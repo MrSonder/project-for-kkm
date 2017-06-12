@@ -115,30 +115,24 @@ if (argc ==2){
     cout<<"arg int entered."<<endl;
     return 0;
 }
-/*
-txArduino(driveStepper(500, 'U', '1'));
-usleep(5E6);
-switchToCamera(new_cam_index);
-getFrameFromCamera();
-vector<vector<int>> myBlocks = readBoard();
-int isGameOver = checkEnd(myBlocks);
-if (isGameOver==1 or isGameOver==-1){cout<<isGameOver<<" wins!"<<endl;}
-else {cout<<"Game continues. Next move is: "<<GiveNextMove(myBlocks)<<endl;}
-waitKey(0);
 
-return 0;
-*/
+    
+    birElOynaRasit('B',pos);
+    return 0;
+    
 
 while(true){
     
-    switchToCamera(bot_cam_index);
-    
+    /*
+    txArduino(driveStepper(500, 'U', '1'));
+    usleep(2E6);
+    switchToCamera(new_cam_index);
     getFrameFromCamera();
     
-    //calibrateThreshold(newFrame, 'W');
-    
+    calibrateThreshold(newFrame, 'W');
+    */
     birElOynaRasitTam('B', pos);
-    
+    return 0;
 }
 
 
@@ -148,21 +142,48 @@ while(true){
 
 void birElOynaRasit(int color, int pos){
     
-    /*
-    setObject('O');
-    searchColorMethod(color, bot_cam_index, -1*pos );
-    goTowardsObjectMethodRasit(color, y_threshold, speed, turn_ratio, bot_cam_index, 1);
-    */
-    
-    while(true){
-    
-    //txArduino(driveStepper(500, 'U', '1'));
-    //cout<<"sleep for 6 sec"<<endl;
-    //usleep(6E6);
-    setObject('T');
-    int x_axis=2;
-    int x_axis_2=3;
-    
+    txArduino(driveStepper(500, 'U', '1'));
+    usleep(2E6);
+    switchToCamera(new_cam_index);
+
+    getFrameFromCamera();
+    vector<vector<int>> myBlocks = readBoard();
+    Point loc;
+    int isGameOver = checkEnd(myBlocks);
+    if (isGameOver==1 or isGameOver==-1){cout<<isGameOver<<" wins!"<<endl;}
+    else {
+        loc = GiveNextMove(myBlocks);
+        cout<<"Game continues. Next move is: "<<loc<<endl;
+    waitKey(0);
+    cout << loc << endl;
+
+    //txArduino(driveStepper(0, 'U', '0'));
+    //usleep(5 * 1e6);
+    //txArduino(driveStepper(700 + loc.y * 200, 'U', '1'));
+    //txArduino(driveStepper(400, 'U', '1'));
+    //usleep(3.5 * 1e6);
+
+    int x_axis;
+    int x_axis_2;
+
+    if (loc.y % 2 == 0)
+    {
+        x_axis = loc.x + loc.y;
+        x_axis_2 = x_axis + 1;
+    }
+
+    else if (loc.y % 2 == 1)
+    {
+        x_axis = loc.x + loc.y;
+        x_axis_2 = x_axis;
+    }
+
+    //x_axis = 0;
+    //x_axis_2 = 1;
+    //setTriangle(0);
+    //x_margin = 20;
+
+    //added
     if (x_axis == 0  and x_axis_2==1) {setTriangle(0);}
     else if (x_axis ==1 and x_axis_2==1) {setTriangle(1);}
     else if (x_axis ==1 and x_axis_2==2) {setTriangle(2);}
@@ -174,10 +195,13 @@ void birElOynaRasit(int color, int pos){
     else if (x_axis ==4 and x_axis_2==5) {setTriangle(8);}
     else if (x_axis ==5 and x_axis_2==5) {setTriangle(9);}
     else if (x_axis ==5 and x_axis_2==6) {setTriangle(10);}
-    
-    
 
-    //Do it in two pieces!
+
+
+
+    setObject('T');
+    
+    
     allignSlotMethod(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index);
 
     goTowardsSlotAfterAllignSlotMethod(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index); // used to be -1 * speed
@@ -186,8 +210,20 @@ void birElOynaRasit(int color, int pos){
     driveMotorForSeconds(1.8, 40, 40);
     cout<<"Kör gittim!"<<endl;
 
-    break;
 
+    txArduino(driveStepper(400, 'D', '1'));
+    usleep(6 * 1e6);
+    driveMotorForSeconds(1.5, -40, -40);
+
+    txArduino(driveStepper(100, 'D', '1'));
+    usleep(1 * 1e6);
+    driveMotorForSeconds(1.2, 40, 40);
+
+    txArduino(driveStepper(0, 'D', '0'));
+
+    setObject('F');
+    searchColorMethod('P', rear_cam_index, 1*pos);
+    goTowardsObjectMethod('P', y_threshold, -1 * speed, turn_ratio, rear_cam_index, 1);
     }
     
 }
@@ -329,6 +365,7 @@ void birElOynaRasitTam(int color, int pos){
 
 
     setObject('T');
+    
     
     allignSlotMethod(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index);
 

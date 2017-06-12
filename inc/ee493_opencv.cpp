@@ -29,6 +29,7 @@ vector<vector<int>> readBoard();
 int findHeightRasit(Mat input);
 
 vector<vector<int>> readBoard(){
+    
     vector<vector<int>> blocks; 
     Mat outputImage = newFrame.clone();
     Mat imageContours;
@@ -36,7 +37,7 @@ vector<vector<int>> readBoard(){
 
     for (int i=0;i<5;i++){
         getFrameFromCamera();
-        imageContours = detectTriangles(newFrame);
+        imageContours = detectTriangles(removeColor(newFrame, 'Y'));
         cout<<"a height is: "<<getAverageHeight(imageContours)<<endl;
         if (getAverageHeight(imageContours)>heightOfTriangle){
             heightOfTriangle = getAverageHeight(imageContours);
