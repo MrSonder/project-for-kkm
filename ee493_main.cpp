@@ -115,23 +115,30 @@ if (argc ==2){
     cout<<"arg int entered."<<endl;
     return 0;
 }
-
-switchToCamera(bot_cam_index);
+/*
+txArduino(driveStepper(500, 'U', '1'));
+usleep(5E6);
+switchToCamera(new_cam_index);
 getFrameFromCamera();
-readBoard();
+vector<vector<int>> myBlocks = readBoard();
+int isGameOver = checkEnd(myBlocks);
+if (isGameOver==1 or isGameOver==-1){cout<<isGameOver<<" wins!"<<endl;}
+else {cout<<"Game continues. Next move is: "<<GiveNextMove(myBlocks)<<endl;}
+waitKey(0);
 
 return 0;
-
+*/
 
 while(true){
-switchToCamera(new_cam_index);
-/*
-    calibrateThreshold(newFrame, 'B');
-
-    return 0;
-*/
-    birElOynaRasit('B', pos);
-    break;
+    
+    switchToCamera(bot_cam_index);
+    
+    getFrameFromCamera();
+    
+    //calibrateThreshold(newFrame, 'W');
+    
+    birElOynaRasitTam('B', pos);
+    
 }
 
 
@@ -265,11 +272,18 @@ void birElOynaRasitTam(int color, int pos){
     driveMotorForSeconds(0.7, 68* pos, -68 * pos);
 
     txArduino(driveStepper(400, 'U', '1'));
-    usleep(1E6);
+    usleep(2E6);
     switchToCamera(new_cam_index);
 
-    getFrameFromCamera(resizeRatio, true, false);
-    Point loc = GiveNextMove(setObjectLocations(newFrame));
+    getFrameFromCamera();
+    vector<vector<int>> myBlocks = readBoard();
+    Point loc;
+    int isGameOver = checkEnd(myBlocks);
+    if (isGameOver==1 or isGameOver==-1){cout<<isGameOver<<" wins!"<<endl;}
+    else {
+        loc = GiveNextMove(myBlocks);
+        cout<<"Game continues. Next move is: "<<loc<<endl;
+    waitKey(0);
     cout << loc << endl;
 
     //txArduino(driveStepper(0, 'U', '0'));
@@ -295,8 +309,8 @@ void birElOynaRasitTam(int color, int pos){
 
     //x_axis = 0;
     //x_axis_2 = 1;
-    setTriangle(0);
-    x_margin = 20;
+    //setTriangle(0);
+    //x_margin = 20;
 
     //added
 	if (x_axis == 0  and x_axis_2==1) {setTriangle(0);}
@@ -315,17 +329,13 @@ void birElOynaRasitTam(int color, int pos){
 
 
     setObject('T');
-    y_height_stop = 9;
-    speed = 28;
-    goTowardsSlotMethodRasit(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index);
-    setObject('T');
-    y_height_stop = 36;
-    goTowardsSlotMethodRasit(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index);
+    
+    allignSlotMethod(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index);
 
-
+    goTowardsSlotAfterAllignSlotMethod(x_axis, x_axis_2, y_threshold, speed, turn_ratio, new_cam_index); // used to be -1 * speed
 
     cout<<"DURDUM!"<<endl;
-    driveMotorForSeconds(2, 40, 40);
+    driveMotorForSeconds(1.8, 40, 40);
     cout<<"Kör gittim!"<<endl;
 
 
@@ -337,6 +347,7 @@ void birElOynaRasitTam(int color, int pos){
     setObject('F');
     searchColorMethod('P', rear_cam_index, 1*pos);
     goTowardsObjectMethod('P', y_threshold, -1 * speed, turn_ratio, rear_cam_index, 1);
+    }
 
 }
 

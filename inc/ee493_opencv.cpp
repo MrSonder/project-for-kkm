@@ -22,14 +22,14 @@ Mat blackMask(Mat image);
 
 Mat removeColor(Mat image, int color);
 
-void readBoard();
+vector<vector<int>> readBoard();
 
 
 
 int findHeightRasit(Mat input);
 
-void readBoard(){
-    
+vector<vector<int>> readBoard(){
+    vector<vector<int>> blocks; 
     Mat outputImage = newFrame.clone();
     Mat imageContours;
     int heightOfTriangle = 0;
@@ -68,99 +68,236 @@ void readBoard(){
 
     int heightForFloors[6] = {0,24,47,69,90,112};
 
-
+    Mat redExtract = thresholdImage(newFrame, 'R', false);
+    Mat blueExtract = thresholdImage(newFrame, 'B', false);
 
     // First floor
+    Scalar whiteColor = Scalar(255, 255, 255);
+
     
+
     for (int x=0;x<(mc.size()-1);x++ ){
+        vector<int> testVector;
+        Mat test = Mat::zeros(newFrame.size(), CV_8UC1);
         int y=0;
         // Create circles for measurement.
+        circle( test,
+         Point(   (mc[x].x+mc[x+1].x)/2   ,  ( (mc[x].y+mc[x+1].y)/2 - heightOfTriangle - heightForFloors[y] )  ), // Minus since upper means lower in pixels.
+         radiusOfCircles, // this should be based on length of 
+         whiteColor,
+         -1,
+         8 );
+
         circle( outputImage,
          Point(   (mc[x].x+mc[x+1].x)/2   ,  ( (mc[x].y+mc[x+1].y)/2 - heightOfTriangle - heightForFloors[y] )  ), // Minus since upper means lower in pixels.
          radiusOfCircles, // this should be based on length of 
-         Scalar( 0, 0, 255 ),
-         1,
+         whiteColor,
+         -1,
          8 );
 
+        Mat test_red;
+        Mat test_blue;
+        redExtract.copyTo(test_red,test);
+        blueExtract.copyTo(test_blue,test);
+        int colorArea = sum(test_red)[0];
+        if (  (sum(test_blue)[0]>=sum(test_red)[0]) and (sum(test_blue)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x);testVector.push_back(y);testVector.push_back(1);}
+            else  {testVector.push_back(x);testVector.push_back(y);testVector.push_back(-1);}
+             }
+        else if (  (sum(test_blue)[0]<sum(test_red)[0]) and (sum(test_red)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x);testVector.push_back(y);testVector.push_back(-1);}
+            else  {testVector.push_back(x);testVector.push_back(y);testVector.push_back(1);}
+             }
+        if (testVector.size()!=0) {blocks.push_back(testVector);}
+        
     }
+
 
     // Second floor
 
     for (int x=1;x<(mc.size()-1);x++ ){
+        vector<int> testVector;
+        Mat test = Mat::zeros(newFrame.size(), CV_8UC1);
         int y=1;
         // Create circles for measurement.
+        circle( test,
+         Point(   mc[x].x -x_difference_due_to_angle ,  ( mc[x].y - heightOfTriangle - heightForFloors[y] )  ), // Minus since upper means lower in pixels.
+         radiusOfCircles, // this should be based on length of 
+         whiteColor,
+        -1,
+         8 );
+
         circle( outputImage,
          Point(   mc[x].x -x_difference_due_to_angle ,  ( mc[x].y - heightOfTriangle - heightForFloors[y] )  ), // Minus since upper means lower in pixels.
          radiusOfCircles, // this should be based on length of 
-         Scalar( 0, 255, 0 ),
-         1,
+         whiteColor,
+        -1,
          8 );
 
+        Mat test_red;
+        Mat test_blue;
+        redExtract.copyTo(test_red,test);
+        blueExtract.copyTo(test_blue,test);
+        int colorArea = sum(test_red)[0];
+        if (  (sum(test_blue)[0]>=sum(test_red)[0]) and (sum(test_blue)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x-1);testVector.push_back(y);testVector.push_back(1);}
+            else  {testVector.push_back(x-1);testVector.push_back(y);testVector.push_back(-1);}
+             }
+        else if (  (sum(test_blue)[0]<sum(test_red)[0]) and (sum(test_red)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x-1);testVector.push_back(y);testVector.push_back(-1);}
+            else  {testVector.push_back(x-1);testVector.push_back(y);testVector.push_back(1);}
+             }
+        if (testVector.size()!=0) {blocks.push_back(testVector);}
     }
 
     // Third floor
 
     for (int x=1;x<(mc.size()-2);x++ ){
+        vector<int> testVector;
+        Mat test = Mat::zeros(newFrame.size(), CV_8UC1);
         int y=2;
         // Create circles for measurement.
+        circle( test,
+         Point(   (mc[x].x+mc[x+1].x)/2 -x_difference_due_to_angle ,  ( (mc[x].y+mc[x+1].y)/2 - heightOfTriangle - heightForFloors[y]   )  ), // Minus since upper means lower in pixels.
+         radiusOfCircles, // this should be based on length of 
+         whiteColor,
+         -1,
+         8 );
         circle( outputImage,
          Point(   (mc[x].x+mc[x+1].x)/2 -x_difference_due_to_angle ,  ( (mc[x].y+mc[x+1].y)/2 - heightOfTriangle - heightForFloors[y]   )  ), // Minus since upper means lower in pixels.
          radiusOfCircles, // this should be based on length of 
-         Scalar( 255, 0, 0 ),
-         1,
+         whiteColor,
+         -1,
          8 );
 
+        Mat test_red;
+        Mat test_blue;
+        redExtract.copyTo(test_red,test);
+        blueExtract.copyTo(test_blue,test);
+        int colorArea = sum(test_red)[0];
+        if (  (sum(test_blue)[0]>=sum(test_red)[0]) and (sum(test_blue)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x-1);testVector.push_back(y);testVector.push_back(1);}
+            else  {testVector.push_back(x-1);testVector.push_back(y);testVector.push_back(-1);}
+             }
+        else if (  (sum(test_blue)[0]<sum(test_red)[0]) and (sum(test_red)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x-1);testVector.push_back(y);testVector.push_back(-1);}
+            else  {testVector.push_back(x-1);testVector.push_back(y);testVector.push_back(1);}
+             }
+        if (testVector.size()!=0) {blocks.push_back(testVector);}
     }
 
     // Fourth floor
 
     for (int x=2;x<(mc.size()-2);x++ ){
+        vector<int> testVector;
+        Mat test = Mat::zeros(newFrame.size(), CV_8UC1);
         int y=3;
         // Create circles for measurement.
+        circle( test,
+         Point(   mc[x].x -x_difference_due_to_angle ,  ( mc[x].y - heightOfTriangle - heightForFloors[y] )  ), // Minus since upper means lower in pixels.
+         radiusOfCircles, // this should be based on length of 
+         whiteColor,
+         -1,
+         8 );
         circle( outputImage,
          Point(   mc[x].x -x_difference_due_to_angle ,  ( mc[x].y - heightOfTriangle - heightForFloors[y] )  ), // Minus since upper means lower in pixels.
          radiusOfCircles, // this should be based on length of 
-         Scalar( 0, 255, 0 ),
-         1,
+         whiteColor,
+         -1,
          8 );
-
+        Mat test_red;
+        Mat test_blue;
+        redExtract.copyTo(test_red,test);
+        blueExtract.copyTo(test_blue,test);
+        int colorArea = sum(test_red)[0];
+        if (  (sum(test_blue)[0]>=sum(test_red)[0]) and (sum(test_blue)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x-2);testVector.push_back(y);testVector.push_back(1);}
+            else  {testVector.push_back(x-2);testVector.push_back(y);testVector.push_back(-1);}
+             }
+        else if (  (sum(test_blue)[0]<sum(test_red)[0]) and (sum(test_red)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x-2);testVector.push_back(y);testVector.push_back(-1);}
+            else  {testVector.push_back(x-2);testVector.push_back(y);testVector.push_back(1);}
+             }
+        if (testVector.size()!=0) {blocks.push_back(testVector);}
     }
 
     // Fifth floor
 
     for (int x=2;x<(mc.size()-3);x++ ){
+        vector<int> testVector;
+        Mat test = Mat::zeros(newFrame.size(), CV_8UC1);
         int y=4;
         // Create circles for measurement.
+        circle( test,
+         Point(   (mc[x].x+mc[x+1].x)/2 -x_difference_due_to_angle ,  ( (mc[x].y+mc[x+1].y)/2 - heightOfTriangle - heightForFloors[y]   )  ), // Minus since upper means lower in pixels.
+         radiusOfCircles, // this should be based on length of 
+         whiteColor,
+         -1,
+         8 );
         circle( outputImage,
          Point(   (mc[x].x+mc[x+1].x)/2 -x_difference_due_to_angle ,  ( (mc[x].y+mc[x+1].y)/2 - heightOfTriangle - heightForFloors[y]   )  ), // Minus since upper means lower in pixels.
          radiusOfCircles, // this should be based on length of 
-         Scalar( 255, 0, 0 ),
-         1,
+         whiteColor,
+         -1,
          8 );
-
+        Mat test_red;
+        Mat test_blue;
+        redExtract.copyTo(test_red,test);
+        blueExtract.copyTo(test_blue,test);
+        int colorArea = sum(test_red)[0];
+        if (  (sum(test_blue)[0]>=sum(test_red)[0]) and (sum(test_blue)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x-2);testVector.push_back(y);testVector.push_back(1);}
+            else  {testVector.push_back(x-2);testVector.push_back(y);testVector.push_back(-1);}
+             }
+        else if (  (sum(test_blue)[0]<sum(test_red)[0]) and (sum(test_red)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x-2);testVector.push_back(y);testVector.push_back(-1);}
+            else  {testVector.push_back(x-2);testVector.push_back(y);testVector.push_back(1);}
+             }
+        if (testVector.size()!=0) {blocks.push_back(testVector);}
     }
 
     // Sixth floor
 
     for (int x=3;x<(mc.size()-3);x++ ){
+        vector<int> testVector;
+        Mat test = Mat::zeros(newFrame.size(), CV_8UC1);
         int y=5;
         // Create circles for measurement.
+        circle( test,
+         Point(   mc[x].x -x_difference_due_to_angle ,  ( mc[x].y - heightOfTriangle  - heightForFloors[y]  )  ), // Minus since upper means lower in pixels. // Used to be -heightOfTriangle*y*floorHeightMultiplier.
+         radiusOfCircles, // this should be based on length of 
+         whiteColor,
+         -1,
+         8 );
         circle( outputImage,
          Point(   mc[x].x -x_difference_due_to_angle ,  ( mc[x].y - heightOfTriangle  - heightForFloors[y]  )  ), // Minus since upper means lower in pixels. // Used to be -heightOfTriangle*y*floorHeightMultiplier.
          radiusOfCircles, // this should be based on length of 
-         Scalar( 0, 255, 0 ),
-         1,
+         whiteColor,
+         -1,
          8 );
-
+        Mat test_red;
+        Mat test_blue;
+        redExtract.copyTo(test_red,test);
+        blueExtract.copyTo(test_blue,test);
+        int colorArea = sum(test_red)[0];
+        if (  (sum(test_blue)[0]>=sum(test_red)[0]) and (sum(test_blue)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x-3);testVector.push_back(y);testVector.push_back(1);}
+            else  {testVector.push_back(x-3);testVector.push_back(y);testVector.push_back(-1);}
+             }
+        else if (  (sum(test_blue)[0]<sum(test_red)[0]) and (sum(test_red)[0]>areaLimitForColor) ) {
+            if (colorFront = 'B') {testVector.push_back(x-3);testVector.push_back(y);testVector.push_back(-1);}
+            else  {testVector.push_back(x-3);testVector.push_back(y);testVector.push_back(1);}
+             }
+        if (testVector.size()!=0) {blocks.push_back(testVector);}
     }
 
 
 
     dispImage(imageContours,"imageContours",1);
     dispImage(outputImage,"outputImage",0);
-    waitKey(0);
+    //waitKey(0);
 
-
+    return blocks;
 }
 
 

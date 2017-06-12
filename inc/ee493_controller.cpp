@@ -113,7 +113,8 @@ void goTowardsSlotAfterAllignSlotMethod(int first_slot_index, int second_slot_in
     {
         getFrameFromCamera();
         //params 50, 100, 10
-        object_exist = goTowardsSlotRasit(speed, removeColor(newFrame, 'Y'), first_slot_index, second_slot_index, ArduinoConnected, y_threshold, control_divider);
+        //object_exist = goTowardsSlotRasit(speed, removeColor(newFrame, 'Y'), first_slot_index, second_slot_index, ArduinoConnected, y_threshold, control_divider);
+        object_exist = goTowardsSlotRasit(speed, newFrame, first_slot_index, second_slot_index, ArduinoConnected, y_threshold, control_divider);
     }
     max_contour_area = 0;
     goTowardsSlotRasitLastError = 1000;
@@ -128,7 +129,8 @@ void goTowardsSlotMethodRasit(int first_slot_index, int second_slot_index, int y
     //getFrameFromCamera(resizeRatio, true, true);
    
     getFrameFromCamera();
-    
+    max_contour_area = 0;
+    goTowardsSlotRasitLastError = 1000;
     Point slots = boardSlotRasit(newFrame, first_slot_index, second_slot_index, false, true);
 
     object_exist = true;
@@ -139,8 +141,7 @@ void goTowardsSlotMethodRasit(int first_slot_index, int second_slot_index, int y
         //params 50, 100, 10
         object_exist = goTowardsSlotRasit(speed, removeColor(newFrame, 'Y'), first_slot_index, second_slot_index, ArduinoConnected, y_threshold, control_divider);
     }
-    max_contour_area = 0;
-    goTowardsSlotRasitLastError = 1000;
+    
     txArduino(driveMotor(0, 0));
 }
 
@@ -154,9 +155,12 @@ void allignSlotMethod(int first_slot_index, int second_slot_index, int y_thresho
     //getFrameFromCamera(resizeRatio, true, true);
     averageHeightForAllignSlot = 0;
     getFrameFromCamera();
+    max_contour_area = 0;
+    allignSlotRasitLastError = 1000;
     
     Point slots = boardForAllignSlot(newFrame, first_slot_index, second_slot_index, false, true);
-
+    cout<<slots<<endl;
+    waitKey(0);
     object_exist = true;
     
     while (object_exist and (averageHeightForAllignSlot<heightAtWhichAllignSlotStops) ) // maybe time should be enough to use this.

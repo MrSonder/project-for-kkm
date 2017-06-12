@@ -131,7 +131,7 @@ void setColor(int colorFront)
     case int('R'):
         iLowH = 155;
         iHighH = 179;
-        iLowS = 70;
+        iLowS = 88; //70
         iHighS = 255;
         iLowV = 70;
         iHighV = 255;

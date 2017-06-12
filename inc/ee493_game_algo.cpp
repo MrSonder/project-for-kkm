@@ -9,6 +9,7 @@ int win(int board[6][6]);
 Mat MaskForTriangle(Mat input, Mat mask, int no_of_contours);
 void pairTriangles(Mat input);
 void initTriangles(Mat input, Mat img);
+void fillBoard(vector<vector<int>> blocks);
 
 int board[6][6] = {{0,0,0,0,0,0},{2,0,0,0,0,0},{2,2,0,0,0,0},{2,2,2,0,0,0},{2,2,2,2,0,0},{2,2,2,2,2,0}} ;
 int no_of_branches = 0;
@@ -17,7 +18,19 @@ Point GiveNextMove(vector<vector<int>> blocks){
 
 
 	// Inialize board array.
-    for (int i=0; i<6;i++){
+    fillBoard(blocks);
+
+	return RobotMove(board);
+}
+
+int checkEnd(vector<vector<int>> blocks){
+	fillBoard(blocks);
+	return win(board);
+
+}
+
+void fillBoard(vector<vector<int>> blocks){
+	for (int i=0; i<6;i++){
         for (int j=0; j<6;j++){
             if (i <= j){
                 board[i][j] = 0;
@@ -31,7 +44,6 @@ Point GiveNextMove(vector<vector<int>> blocks){
 		int color = blocks[i][2];
 		board[pos_x][pos_y] = color;
 		}
-	return RobotMove(board);
 }
 
 

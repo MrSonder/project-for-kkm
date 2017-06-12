@@ -108,3 +108,7 @@ Point2f pointForSecondPart;
 
 // Make pos
 int x_difference_due_to_angle = pos*4;
+
+
+/// Board
+int areaLimitForColor = 10000;
