@@ -54,6 +54,8 @@ void birElOynaRasitTam(int color, int pos);
 
 void setTriangle(int triangle);
 
+void setElevatorUpDown(int floor);
+
 int main(int argc, char *argv[])
 {
     time(&start);
@@ -93,10 +95,17 @@ if (inputChar == 'c'){
             if (waitKey(1)==27){break;}
         }
     }
+    
+} else if (inputChar == 'w'){
+    txArduino(driveStepper(500, 'U', '1'));
+    usleep(5E6);
+    switchToCamera(new_cam_index);
+    getFrameFromCamera();
+    
+    calibrateThreshold(newFrame, 'W');
+} 
+    
     return 0;
-}
-    
-    
 }
 
 
@@ -115,11 +124,19 @@ if (argc ==2){
     cout<<"arg int entered."<<endl;
     return 0;
 }
-
+    /*
+    txArduino(driveStepper(500, 'U', '1'));
+    usleep(5E6);
+    switchToCamera(new_cam_index);
+    getFrameFromCamera();
     
+    calibrateThreshold(newFrame, 'W');
+    return 0;
+    */
+    /*
     birElOynaRasit('B',pos);
     return 0;
-    
+    */
 
 while(true){
     
@@ -196,8 +213,11 @@ void birElOynaRasit(int color, int pos){
     else if (x_axis ==5 and x_axis_2==5) {setTriangle(9);}
     else if (x_axis ==5 and x_axis_2==6) {setTriangle(10);}
 
-
-
+    txArduino(driveMotor(0, 0));
+    cout<<"1 saniye uyucam."<<endl;
+    usleep(1E6);
+    waitKey(0);
+    switchToCamera(new_cam_index);
 
     setObject('T');
     
@@ -305,10 +325,10 @@ void birElOynaRasitTam(int color, int pos){
     goTowardsObjectMethod('G', y_threshold, -1 * speed, turn_ratio, rear_cam_index, 1);
     
 
-    driveMotorForSeconds(0.7, 68* pos, -68 * pos);
+    driveMotorForSeconds(0.7, 69* pos, -69 * pos);
 
     txArduino(driveStepper(400, 'U', '1'));
-    usleep(2E6);
+    usleep(3E6);
     switchToCamera(new_cam_index);
 
     getFrameFromCamera();
@@ -319,7 +339,7 @@ void birElOynaRasitTam(int color, int pos){
     else {
         loc = GiveNextMove(myBlocks);
         cout<<"Game continues. Next move is: "<<loc<<endl;
-    waitKey(0);
+    
     cout << loc << endl;
 
     //txArduino(driveStepper(0, 'U', '0'));
@@ -343,12 +363,16 @@ void birElOynaRasitTam(int color, int pos){
         x_axis_2 = x_axis;
     }
 
-    //x_axis = 0;
-    //x_axis_2 = 1;
-    //setTriangle(0);
-    //x_margin = 20;
+    
+    setElevatorUpDown(loc.y);
 
-    //added
+    if ( (elevatorUpValue-400) >0 ){
+        txArduino(driveStepper( (elevatorUpValue-400), 'U', '1'));
+        usleep(3E6);
+    }
+    cout<<"floor is: "<<loc.y<<endl;
+    cout<<"elevatorUpValue is: "<<elevatorUpValue<<" and elevatorDownValue is: "<<elevatorDownValue<<endl;
+
 	if (x_axis == 0  and x_axis_2==1) {setTriangle(0);}
     else if (x_axis ==1 and x_axis_2==1) {setTriangle(1);}
     else if (x_axis ==1 and x_axis_2==2) {setTriangle(2);}
@@ -361,6 +385,11 @@ void birElOynaRasitTam(int color, int pos){
     else if (x_axis ==5 and x_axis_2==5) {setTriangle(9);}
     else if (x_axis ==5 and x_axis_2==6) {setTriangle(10);}
 
+    txArduino(driveMotor(0, 0));
+    cout<<"1 saniye uyucam."<<endl;
+    usleep(1E6);
+    waitKey(0);
+    switchToCamera(new_cam_index);
 
 
 
@@ -376,10 +405,17 @@ void birElOynaRasitTam(int color, int pos){
     cout<<"Kör gittim!"<<endl;
 
 
-    txArduino(driveStepper(400, 'D', '1'));
+    txArduino(driveStepper(elevatorDownValue, 'D', '1'));
     usleep(6 * 1e6);
-    driveMotorForSeconds(1.5, -70, -70);
+    driveMotorForSeconds(1.5, -40, -40);
+
+    txArduino(driveStepper(100, 'D', '1'));
+    usleep(1 * 1e6);
+    driveMotorForSeconds(1.2, 40, 40);
+    driveMotorForSeconds(0.6, -40, -40);
+
     txArduino(driveStepper(0, 'D', '0'));
+
 
     setObject('F');
     searchColorMethod('P', rear_cam_index, 1*pos);
@@ -600,19 +636,50 @@ void setTriangle(int triangle){
             x_margin=35;
             break;
         case 6:
-            x_margin=45;
-            break;
-        case 7:
             x_margin=50;
             break;
-        case 8:
+        case 7:
             x_margin=55;
             break;
+        case 8:
+            x_margin=60;
+            break;
         case 9:
-            x_margin=65;
+            x_margin=70;
             break;
         case 10:
-            x_margin=75;
+            x_margin=80;
             break;
+    }
+}
+
+void setElevatorUpDown(int floor){
+    switch (floor){
+        case 0:
+            elevatorUpValue = 400;
+            elevatorDownValue = 400;
+            break;
+        case 1:
+            elevatorUpValue = 600;
+            elevatorDownValue = 400;
+            break;
+        case 2:
+            elevatorUpValue = 700;
+            elevatorDownValue = 290;
+            break;
+        case 3:
+            elevatorUpValue = 800;
+            elevatorDownValue = 180;
+            break;
+        case 4:
+            elevatorUpValue = 0;
+            elevatorDownValue = 0;
+            break;
+        case 5:
+            elevatorUpValue = 0;
+            elevatorDownValue = 0;
+            break;
+
+
     }
 }

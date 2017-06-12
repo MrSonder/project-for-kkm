@@ -160,7 +160,7 @@ void allignSlotMethod(int first_slot_index, int second_slot_index, int y_thresho
     
     Point slots = boardForAllignSlot(newFrame, first_slot_index, second_slot_index, false, true);
     cout<<slots<<endl;
-    waitKey(0);
+    //waitKey(0);
     object_exist = true;
     
     while (object_exist and (averageHeightForAllignSlot<heightAtWhichAllignSlotStops) ) // maybe time should be enough to use this.

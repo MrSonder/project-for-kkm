@@ -190,7 +190,7 @@ void setColor(int colorFront)
         iLowH = 0;
         iHighH = 179;
         iLowS = 0;
-        iHighS = 65;
+        iHighS = 61; //39, 65
         iLowV = 205;
         iHighV = 255;
         break;
