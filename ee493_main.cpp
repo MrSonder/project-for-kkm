@@ -96,10 +96,10 @@ if (inputChar == 'c'){
         }
     }
     
-} else if (inputChar == 'W' or inputChar == 'B' or inputChar == 'R'){
+} else if (inputChar == 'W' or inputChar == 'B' or inputChar == 'R' or inputChar == 'P' or inputChar == 'G' ){
     txArduino(driveStepper(500, 'U', '1'));
     usleep(5E6);
-    switchToCamera(new_cam_index);
+    switchToCamera(rear_cam_index);
     getFrameFromCamera();
     
     calibrateThreshold(newFrame, inputChar);
@@ -415,6 +415,9 @@ void birElOynaRasitTam(int color, int pos){
 
     driveMotorForSeconds(0.7, 69* pos, -69 * pos);
 
+    searchColorMethod('Y', rear_cam_index, -1 * pos);
+    //driveMotorForSeconds(0.1, 40,  -40);
+
     txArduino(driveStepper(400, 'U', '1'));
     usleep(3E6);
     switchToCamera(new_cam_index);
@@ -438,7 +441,7 @@ void birElOynaRasitTam(int color, int pos){
 
     int x_axis;
     int x_axis_2;
-
+    /*
     if (loc.y % 2 == 0)
     {
         x_axis = loc.x + loc.y;
@@ -450,7 +453,92 @@ void birElOynaRasitTam(int color, int pos){
         x_axis = loc.x + loc.y;
         x_axis_2 = x_axis;
     }
+    */
 
+    if (loc == Point(0,0)) {
+        x_axis = 0;
+        x_axis_2 = 1;
+    }
+    else if (loc == Point(1,0)) {
+        x_axis = 1;
+        x_axis_2 = 2;
+    }
+    else if (loc == Point(2,0)) {
+        x_axis = 2;
+        x_axis_2 = 3;
+    }
+    else if (loc == Point(3,0)) {
+        x_axis = 3;
+        x_axis_2 = 4;
+    }        
+    else if (loc == Point(4,0)) {
+        x_axis = 4;
+        x_axis_2 = 5;
+    }        
+    else if (loc == Point(5,0)) {
+        x_axis = 5;
+        x_axis_2 = 6;
+    }        
+    else if (loc == Point(0,1)) {
+        x_axis = 1;
+        x_axis_2 = 1;
+    }
+    else if (loc == Point(1,1)) {
+        x_axis = 2;
+        x_axis_2 = 2;
+    }
+    else if (loc == Point(2,1)) {
+        x_axis = 3;
+        x_axis_2 = 3;
+    }
+    else if (loc == Point(3,1)) {
+        x_axis = 4;
+        x_axis_2 = 4;
+    }
+    else if (loc == Point(4,1)) {
+        x_axis = 5;
+        x_axis_2 = 5;
+    }
+    else if (loc == Point(0,2)) {
+        x_axis = 1;
+        x_axis_2 = 2;
+    }
+    else if (loc == Point(1,2)) {
+        x_axis = 2;
+        x_axis_2 = 3;
+    }
+    else if (loc == Point(2,2)) {
+        x_axis = 3;
+        x_axis_2 = 4;
+    }
+    else if (loc == Point(3,2)) {
+        x_axis = 4;
+        x_axis_2 = 5;
+    }
+    else if (loc == Point(0,3)) {
+        x_axis = 2;
+        x_axis_2 = 2;
+    }
+    else if (loc == Point(1,3)) {
+        x_axis = 3;
+        x_axis_2 = 3;
+    }
+    else if (loc == Point(2,3)) {
+        x_axis = 4;
+        x_axis_2 = 4;
+    }
+    else if (loc == Point(0,4)) {
+        x_axis = 2;
+        x_axis_2 = 3;
+    }
+    else if (loc == Point(1,4)) {
+        x_axis = 3;
+        x_axis_2 = 4;
+    }
+    else if (loc == Point(0,5)) {
+        x_axis = 3;
+        x_axis_2 = 3;
+    }
     
     setElevatorUpDown(loc.y);
 
@@ -476,7 +564,7 @@ void birElOynaRasitTam(int color, int pos){
     txArduino(driveMotor(0, 0));
     cout<<"1 saniye uyucam."<<endl;
     usleep(1E6);
-    waitKey(0);
+//    waitKey(0);
     switchToCamera(new_cam_index);
 
 
@@ -499,7 +587,7 @@ void birElOynaRasitTam(int color, int pos){
 
     txArduino(driveStepper(100, 'D', '1'));
     usleep(1 * 1e6);
-    driveMotorForSeconds(1.2, 40, 40);
+    driveMotorForSeconds(1, 40, 40);
     driveMotorForSeconds(0.6, -40, -40);
 
     txArduino(driveStepper(0, 'D', '0'));

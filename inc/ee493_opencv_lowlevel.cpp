@@ -156,14 +156,32 @@ void setColor(int colorFront)
         break;
 
     case int('P'):
-        iLowH = 119;
-        iHighH = 160;
-        iLowS = 25;
+        iLowH = 126;
+        iHighH = 168;
+        iLowS = 57;
+        iHighS = 255;
+        iLowV = 50;
+        iHighV = 255;
+        break;
+        /*
+    case int('G'):
+        iLowH = 50;
+        iHighH = 100;
+        iLowS = 15;
         iHighS = 255;
         iLowV = 35;
         iHighV = 255;
         break;
 
+    case int('P'):
+        iLowH = 128; //119
+        iHighH = 169; //160
+        iLowS = 65; //25
+        iHighS = 161; //255
+        iLowV = 40; //35
+        iHighV = 151; //255
+        break;
+*/
     case int('w'):
         method = THRESH_BINARY;
         erode_val = 1;

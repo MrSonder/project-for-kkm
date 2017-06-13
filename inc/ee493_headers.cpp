@@ -64,7 +64,7 @@ int contour_area_limit_margin = 550; // Buna gelince gideceği yere dönüyor.
 
 // When to stop where to go. How much of a margin is needed?
 int x_margin = 50; //needs to be changed.
-int y_height_stop = 35;
+int y_height_stop = 34;
 int y_height_change_dir = 28;
 int max_average_height = 0;
 // Triangle coordinates.
