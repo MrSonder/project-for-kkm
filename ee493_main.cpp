@@ -96,13 +96,13 @@ if (inputChar == 'c'){
         }
     }
     
-} else if (inputChar == 'w'){
+} else if (inputChar == 'W' or inputChar == 'B' or inputChar == 'R'){
     txArduino(driveStepper(500, 'U', '1'));
     usleep(5E6);
     switchToCamera(new_cam_index);
     getFrameFromCamera();
     
-    calibrateThreshold(newFrame, 'W');
+    calibrateThreshold(newFrame, inputChar);
 } 
     
     return 0;
@@ -183,6 +183,7 @@ void birElOynaRasit(int color, int pos){
     int x_axis;
     int x_axis_2;
 
+    /*
     if (loc.y % 2 == 0)
     {
         x_axis = loc.x + loc.y;
@@ -194,6 +195,93 @@ void birElOynaRasit(int color, int pos){
         x_axis = loc.x + loc.y;
         x_axis_2 = x_axis;
     }
+    */
+
+    if (loc == Point(0,0)) {
+        x_axis = 0;
+        x_axis_2 = 1;
+    }
+    else if (loc == Point(0,1)) {
+        x_axis = 1;
+        x_axis_2 = 2;
+    }
+    else if (loc == Point(0,2)) {
+        x_axis = 2;
+        x_axis_2 = 3;
+    }
+    else if (loc == Point(0,3)) {
+        x_axis = 3;
+        x_axis_2 = 4;
+    }        
+    else if (loc == Point(0,4)) {
+        x_axis = 4;
+        x_axis_2 = 5;
+    }        
+    else if (loc == Point(0,5)) {
+        x_axis = 5;
+        x_axis_2 = 6;
+    }        
+    else if (loc == Point(1,0)) {
+        x_axis = 1;
+        x_axis_2 = 1;
+    }
+    else if (loc == Point(1,1)) {
+        x_axis = 2;
+        x_axis_2 = 2;
+    }
+    else if (loc == Point(1,2)) {
+        x_axis = 3;
+        x_axis_2 = 3;
+    }
+    else if (loc == Point(1,3)) {
+        x_axis = 4;
+        x_axis_2 = 4;
+    }
+    else if (loc == Point(1,4)) {
+        x_axis = 5;
+        x_axis_2 = 5;
+    }
+    else if (loc == Point(2,0)) {
+        x_axis = 1;
+        x_axis_2 = 2;
+    }
+    else if (loc == Point(2,1)) {
+        x_axis = 2;
+        x_axis_2 = 3;
+    }
+    else if (loc == Point(2,2)) {
+        x_axis = 3;
+        x_axis_2 = 4;
+    }
+    else if (loc == Point(2,3)) {
+        x_axis = 4;
+        x_axis_2 = 5;
+    }
+    else if (loc == Point(3,0)) {
+        x_axis = 2;
+        x_axis_2 = 2;
+    }
+    else if (loc == Point(3,1)) {
+        x_axis = 3;
+        x_axis_2 = 3;
+    }
+    else if (loc == Point(3,2)) {
+        x_axis = 4;
+        x_axis_2 = 4;
+    }
+    else if (loc == Point(4,0)) {
+        x_axis = 2;
+        x_axis_2 = 3;
+    }
+    else if (loc == Point(4,1)) {
+        x_axis = 3;
+        x_axis_2 = 4;
+    }
+    else if (loc == Point(5,0)) {
+        x_axis = 3;
+        x_axis_2 = 3;
+    }
+
 
     //x_axis = 0;
     //x_axis_2 = 1;
